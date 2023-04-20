@@ -115,14 +115,16 @@ class _EasyImageViewerDismissibleDialogState
             Positioned(
               top: 5,
               right: 5,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                color: widget.closeButtonColor,
-                tooltip: widget.closeButtonTooltip,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _handleDismissal();
-                },
+              child: SafeArea(
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  color: widget.closeButtonColor,
+                  tooltip: widget.closeButtonTooltip,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _handleDismissal();
+                  },
+                ),
               ),
             ),
             if (widget.actionsBuilder != null)
