@@ -32,25 +32,32 @@ const _defaultCloseButtonTooltip = 'Close';
 /// close button and is used for accessibility.
 /// The [closeButtonColor] defaults to white, but can be set to any other color.
 Future<Dialog?> showImageViewer(
-    BuildContext context, ImageProvider imageProvider,
-    {bool immersive = true,
-    void Function()? onViewerDismissed,
-    bool useSafeArea = false,
-    bool swipeDismissible = false,
-    bool doubleTapZoomable = false,
-    Color backgroundColor = _defaultBackgroundColor,
-    String closeButtonTooltip = _defaultCloseButtonTooltip,
-    Color closeButtonColor = _defaultCloseButtonColor}) {
-  return showImageViewerPager(context, SingleImageProvider(imageProvider),
-      immersive: immersive,
-      onViewerDismissed:
-          onViewerDismissed != null ? (_) => onViewerDismissed() : null,
-      useSafeArea: useSafeArea,
-      swipeDismissible: swipeDismissible,
-      doubleTapZoomable: doubleTapZoomable,
-      backgroundColor: backgroundColor,
-      closeButtonTooltip: closeButtonTooltip,
-      closeButtonColor: closeButtonColor);
+  BuildContext context,
+  ImageProvider imageProvider, {
+  bool immersive = true,
+  void Function()? onViewerDismissed,
+  bool useSafeArea = false,
+  bool swipeDismissible = false,
+  bool doubleTapZoomable = false,
+  Color backgroundColor = _defaultBackgroundColor,
+  String closeButtonTooltip = _defaultCloseButtonTooltip,
+  Color closeButtonColor = _defaultCloseButtonColor,
+  ActionsBuilder? actionsBuilder,
+}) {
+  return showImageViewerPager(
+    context,
+    SingleImageProvider(imageProvider),
+    immersive: immersive,
+    onViewerDismissed:
+        onViewerDismissed != null ? (_) => onViewerDismissed() : null,
+    useSafeArea: useSafeArea,
+    swipeDismissible: swipeDismissible,
+    doubleTapZoomable: doubleTapZoomable,
+    backgroundColor: backgroundColor,
+    closeButtonTooltip: closeButtonTooltip,
+    closeButtonColor: closeButtonColor,
+    actionsBuilder: actionsBuilder,
+  );
 }
 
 /// Shows the images provided by the [imageProvider] in a full-screen PageView [Dialog].
@@ -67,16 +74,19 @@ Future<Dialog?> showImageViewer(
 /// close button and is used for accessibility.
 /// The [closeButtonColor] defaults to white, but can be set to any other color.
 Future<Dialog?> showImageViewerPager(
-    BuildContext context, EasyImageProvider imageProvider,
-    {bool immersive = true,
-    void Function(int)? onPageChanged,
-    void Function(int)? onViewerDismissed,
-    bool useSafeArea = false,
-    bool swipeDismissible = false,
-    bool doubleTapZoomable = false,
-    Color backgroundColor = _defaultBackgroundColor,
-    String closeButtonTooltip = _defaultCloseButtonTooltip,
-    Color closeButtonColor = _defaultCloseButtonColor}) {
+  BuildContext context,
+  EasyImageProvider imageProvider, {
+  bool immersive = true,
+  void Function(int)? onPageChanged,
+  void Function(int)? onViewerDismissed,
+  bool useSafeArea = false,
+  bool swipeDismissible = false,
+  bool doubleTapZoomable = false,
+  Color backgroundColor = _defaultBackgroundColor,
+  String closeButtonTooltip = _defaultCloseButtonTooltip,
+  Color closeButtonColor = _defaultCloseButtonColor,
+  ActionsBuilder? actionsBuilder,
+}) {
   if (immersive) {
     // Hide top and bottom bars
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -86,15 +96,18 @@ Future<Dialog?> showImageViewerPager(
       context: context,
       useSafeArea: useSafeArea,
       builder: (context) {
-        return EasyImageViewerDismissibleDialog(imageProvider,
-            immersive: immersive,
-            onPageChanged: onPageChanged,
-            onViewerDismissed: onViewerDismissed,
-            useSafeArea: useSafeArea,
-            swipeDismissible: swipeDismissible,
-            doubleTapZoomable: doubleTapZoomable,
-            backgroundColor: backgroundColor,
-            closeButtonColor: closeButtonColor,
-            closeButtonTooltip: closeButtonTooltip);
+        return EasyImageViewerDismissibleDialog(
+          imageProvider,
+          immersive: immersive,
+          onPageChanged: onPageChanged,
+          onViewerDismissed: onViewerDismissed,
+          useSafeArea: useSafeArea,
+          swipeDismissible: swipeDismissible,
+          doubleTapZoomable: doubleTapZoomable,
+          backgroundColor: backgroundColor,
+          closeButtonColor: closeButtonColor,
+          closeButtonTooltip: closeButtonTooltip,
+          actionsBuilder: actionsBuilder,
+        );
       });
 }

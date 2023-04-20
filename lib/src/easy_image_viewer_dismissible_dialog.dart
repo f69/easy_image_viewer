@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'easy_image_provider.dart';
 import 'easy_image_view_pager.dart';
 
+typedef ActionsBuilder = Widget Function(BuildContext context, double page);
+
 /// An internal widget that is used to hold a state to activate/deactivate the ability to
 /// swipe-to-dismiss. This needs to be tied to the zoom scale of the current image, since
 /// the user needs to be able to pan around on a zoomed-in image without triggering the
@@ -19,20 +21,23 @@ class EasyImageViewerDismissibleDialog extends StatefulWidget {
   final Color backgroundColor;
   final String closeButtonTooltip;
   final Color closeButtonColor;
+  final ActionsBuilder? actionsBuilder;
 
   /// Refer to [showImageViewerPager] for the arguments
-  const EasyImageViewerDismissibleDialog(this.imageProvider,
-      {Key? key,
-      this.immersive = true,
-      this.onPageChanged,
-      this.onViewerDismissed,
-      this.useSafeArea = false,
-      this.swipeDismissible = false,
-      this.doubleTapZoomable = false,
-      required this.backgroundColor,
-      required this.closeButtonTooltip,
-      required this.closeButtonColor})
-      : super(key: key);
+  const EasyImageViewerDismissibleDialog(
+    this.imageProvider, {
+    Key? key,
+    this.immersive = true,
+    this.onPageChanged,
+    this.onViewerDismissed,
+    this.useSafeArea = false,
+    this.swipeDismissible = false,
+    this.doubleTapZoomable = false,
+    required this.backgroundColor,
+    required this.closeButtonTooltip,
+    required this.closeButtonColor,
+    this.actionsBuilder,
+  }) : super(key: key);
 
   @override
   State<EasyImageViewerDismissibleDialog> createState() =>
@@ -78,46 +83,60 @@ class _EasyImageViewerDismissibleDialogState
   @override
   Widget build(BuildContext context) {
     final popScopeAwareDialog = WillPopScope(
-        onWillPop: () async {
-          _handleDismissal();
-          return true;
-        },
-        key: _popScopeKey,
-        child: Dialog(
-            backgroundColor: widget.backgroundColor,
-            insetPadding: const EdgeInsets.all(0),
-            // We set the shape here to ensure no rounded corners allow any of the
-            // underlying view to show. We want the whole background to be covered.
-            shape:
-                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-            child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: <Widget>[
-                  EasyImageViewPager(
-                      easyImageProvider: widget.imageProvider,
-                      pageController: _pageController,
-                      doubleTapZoomable: widget.doubleTapZoomable,
-                      onScaleChanged: (scale) {
-                        setState(() {
-                          _dismissDirection = scale <= 1.0
-                              ? DismissDirection.down
-                              : DismissDirection.none;
-                        });
-                      }),
-                  Positioned(
-                      top: 5,
-                      right: 5,
-                      child: IconButton(
-                        icon: const Icon(Icons.close),
-                        color: widget.closeButtonColor,
-                        tooltip: widget.closeButtonTooltip,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _handleDismissal();
-                        },
-                      ))
-                ])));
+      onWillPop: () async {
+        _handleDismissal();
+        return true;
+      },
+      key: _popScopeKey,
+      child: Dialog(
+        backgroundColor: widget.backgroundColor,
+        insetPadding: const EdgeInsets.all(0),
+        // We set the shape here to ensure no rounded corners allow any of the
+        // underlying view to show. We want the whole background to be covered.
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: <Widget>[
+            EasyImageViewPager(
+              easyImageProvider: widget.imageProvider,
+              pageController: _pageController,
+              doubleTapZoomable: widget.doubleTapZoomable,
+              onScaleChanged: (scale) {
+                setState(
+                  () {
+                    _dismissDirection = scale <= 1.0
+                        ? DismissDirection.down
+                        : DismissDirection.none;
+                  },
+                );
+              },
+            ),
+            Positioned(
+              top: 5,
+              right: 5,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                color: widget.closeButtonColor,
+                tooltip: widget.closeButtonTooltip,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _handleDismissal();
+                },
+              ),
+            ),
+            if (widget.actionsBuilder != null)
+              AnimatedBuilder(
+                animation: _pageController,
+                builder: (context, child) {
+                  return widget.actionsBuilder!(
+                      context, _pageController.page ?? 0);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
 
     if (widget.swipeDismissible) {
       return Dismissible(
