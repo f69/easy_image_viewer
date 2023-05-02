@@ -132,7 +132,10 @@ class _EasyImageViewerDismissibleDialogState
                 animation: _pageController,
                 builder: (context, child) {
                   return widget.actionsBuilder!(
-                      context, _pageController.page ?? 0);
+                    context,
+                    _pageController.page ??
+                        _pageController.initialPage.toDouble(),
+                  );
                 },
               ),
           ],
@@ -168,7 +171,11 @@ class _EasyImageViewerDismissibleDialogState
     }
 
     if (widget.immersive) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+      );
     }
     if (_internalPageChangeListener != null) {
       _pageController.removeListener(_internalPageChangeListener!);
