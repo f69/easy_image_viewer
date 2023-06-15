@@ -43,6 +43,7 @@ Future<Dialog?> showImageViewer(
   String closeButtonTooltip = _defaultCloseButtonTooltip,
   Color closeButtonColor = _defaultCloseButtonColor,
   ActionsBuilder? actionsBuilder,
+  bool darkenSystemUI = false,
 }) {
   return showImageViewerPager(
     context,
@@ -57,6 +58,7 @@ Future<Dialog?> showImageViewer(
     closeButtonTooltip: closeButtonTooltip,
     closeButtonColor: closeButtonColor,
     actionsBuilder: actionsBuilder,
+    darkenSystemUI: darkenSystemUI,
   );
 }
 
@@ -86,6 +88,7 @@ Future<Dialog?> showImageViewerPager(
   String closeButtonTooltip = _defaultCloseButtonTooltip,
   Color closeButtonColor = _defaultCloseButtonColor,
   ActionsBuilder? actionsBuilder,
+  bool darkenSystemUI = false,
 }) {
   if (immersive) {
     // Hide top and bottom bars
@@ -108,6 +111,7 @@ Future<Dialog?> showImageViewerPager(
           closeButtonColor: closeButtonColor,
           closeButtonTooltip: closeButtonTooltip,
           actionsBuilder: actionsBuilder,
+          darkenSystemUI: darkenSystemUI,
         );
       });
 }

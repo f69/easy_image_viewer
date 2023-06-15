@@ -22,6 +22,7 @@ class EasyImageViewerDismissibleDialog extends StatefulWidget {
   final String closeButtonTooltip;
   final Color closeButtonColor;
   final ActionsBuilder? actionsBuilder;
+  final bool darkenSystemUI;
 
   /// Refer to [showImageViewerPager] for the arguments
   const EasyImageViewerDismissibleDialog(
@@ -37,6 +38,7 @@ class EasyImageViewerDismissibleDialog extends StatefulWidget {
     required this.closeButtonTooltip,
     required this.closeButtonColor,
     this.actionsBuilder,
+    this.darkenSystemUI = false,
   }) : super(key: key);
 
   @override
@@ -82,7 +84,7 @@ class _EasyImageViewerDismissibleDialogState
 
   @override
   Widget build(BuildContext context) {
-    final popScopeAwareDialog = WillPopScope(
+    Widget popScopeAwareDialog = WillPopScope(
       onWillPop: () async {
         _handleDismissal();
         return true;
@@ -142,6 +144,21 @@ class _EasyImageViewerDismissibleDialogState
         ),
       ),
     );
+
+    if (widget.darkenSystemUI) {
+      popScopeAwareDialog = AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.black,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarContrastEnforced: false,
+          systemStatusBarContrastEnforced: false,
+        ),
+        child: popScopeAwareDialog,
+      );
+    }
 
     if (widget.swipeDismissible) {
       return Dismissible(
